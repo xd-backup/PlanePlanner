@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>PlanePlanner</title>
+
+	<!-- planner -->
+	<style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; } 
+      #map { padding:0; } 
+      #citationInfo { position:absolute; color:black; font-weight:bold; font-size:12pt; left:10px; bottom:10px; z-Index:999; }
+    </style>
+	<link rel="stylesheet" href="js/arcgis/esri/css/esri.css">
+	<script>
+		window.requireNode = window.require;
+		window.require = undefined;
+	</script>
+	<script src="js/arcgis/init.js"></script>
+	<script src="js/planner.js"></script>
+    
+	<!-- webgl -->
+    <link href="css/model.css" rel="stylesheet">
+    <script src="js/three.js"></script>
+    <script src="js/ColladaLoader.js"></script>
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/MTLLoader.js"></script>
+    <script src="js/OBJMTLLoader.js"></script>
+    <script src="js/STLLoader.js"></script>
+	<script src="js/showlogo3d.js"></script>
+	<script src="js/DataReceiver.js"></script>
+	<script src="js/main.js"></script>
+    <!-- Bootstrap -->
+    <link href="js/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link rel="stylesheet" href="js/bootstrap/css/bootstrap-theme.css">
+	<link href="css/grid.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>PlanePlanner!</h1>
+	<div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6" id="map" style="width:800px;height:800px;">
+	    </div>
+        <div class="col-md-6">
+	      <div class="row">
+            <div class="col-xs-8 col-sm-12">
+              <div style="width:700px;height:400px;" id="model"></div>
+            </div>
+	      </div>
+          <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              1.1 Speed
+            </div>
+            <div class="col-xs-4 col-sm-6">
+              1.2 Time
+            </div>
+          </div>
+		  <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              2.1 Course_GPS
+            </div>
+            <div class="col-xs-4 col-sm-6">
+              2.2 Course_10Aixs
+            </div>
+          </div>
+	      <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              3.1 Height_GPS
+            </div>
+            <div class="col-xs-4 col-sm-6">
+				<label id="imu_alt"></label>
+              3.2 Height_10Aixs
+            </div>
+          </div>
+		  <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              4.1 Voltage
+            </div>
+            <div class="col-xs-4 col-sm-6">
+				<label id="imu_alt"></label>
+              4.2 Flying Time
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap/js/bootstrap.js"></script>
+	
+	<script>
+	//main loop
+	
+	</script>
+  </body>
+</html>
+
+

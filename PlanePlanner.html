@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>PlanePlanner</title>
+
+	<!-- planner -->
+	<style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; } 
+      #map { padding:0; } 
+      #citationInfo { position:absolute; color:black; font-weight:bold; font-size:12pt; left:10px; bottom:10px; z-Index:999; }
+    </style>
+	<link rel="stylesheet" href="js/arcgis/esri/css/esri.css">
+	<link href="css/model.css" rel="stylesheet">
+	<link href="js/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link rel="stylesheet" href="js/bootstrap/css/bootstrap-theme.css">
+	<link href="css/grid.css" rel="stylesheet">
+	
+	<script>
+		window.requireNode = window.require;
+		window.require = undefined;
+	</script>
+	
+	<script src="js/require.js"></script>
+	<script>
+		window.requireJs = window.require;
+		window.defineJs = window.define;
+		window.require = undefined;
+		window.define = undefined;
+	</script>
+	
+    <script src="js/arcgis/init.js"></script>
+    <script>
+      require([
+        "esri/map", "esri/graphic",
+		"baidu/BaiduSatLayer", "baidu/BaiduLblLayer", "baidu/ProjectionTrans",
+		"esri/SpatialReference", "esri/geometry/Point", "esri/symbols/PictureMarkerSymbol",
+		"js/MapProvider.js",
+        "dojo/parser",    
+		"dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        Map, Graphic, 
+		BaiduSatLayer, BaiduLblLayer, ProjectionTrans,
+        SpatialReference, Point, PictureMarkerSymbol,
+		MapProvider,
+        parser
+      ) {  
+        parser.parse();
+		
+		requireJs.config({
+			baseUrl: 'js',
+			shim: {
+				'bootstrap': {
+					deps: ['jquery']
+				},
+				'ColladaLoader': {
+					deps: ['THREE']
+				},
+				'showlogo3d': {
+					deps: ['THREE']
+				}
+			}
+		});
+		requireJs(["jquery", "DataReceiver", 
+			 "bootstrap/js/bootstrap", "ColladaLoader"], 
+		function($, DataReceiver) {
+			console.log('hello requirejs');
+			
+		//init model
+		//dataInit(mesh, function ...)
+		//1 register handler
+		//3.1 GPS_ALT 
+		DataReceiver.registerHandler("GPS_ALT", function(dataJson){
+			$('#gps_alt').value(dataJson.alt);
+		});
+	
+		//GPS_LOC 
+		DataReceiver.registerHandler("GPS_LOC", function(dataJson){
+			var planeCoord = new Point(dataJson.lat, dataJson.lon, new SpatialReference({wkid: 4326})); // WGS84
+			MapProvider.updatePlane(planeCoord);
+		});
+	
+		//GPS_TS
+		DataReceiver.registerHandler("GPS_TS", function(dataJson){
+			console.log(dataJson.date);
+			console.log(dataJson.time);
+		});
+	
+		//1.1 GPS_SPD
+		DataReceiver.registerHandler("GPS_SPD", function(dataJson){
+			console.log(dataJson.spd);
+			$('#gps_spd').value(dataJson.spd);
+		});
+	
+		//2.1 GPS_CRS 
+		DataReceiver.registerHandler("GPS_CRS", function(dataJson){
+			console.log(dataJson.crs);
+			$('#gps_crs').value(dataJson.crs);
+		});
+	
+		//GPS_SAT
+		DataReceiver.registerHandler("GPS_SAT", function(dataJson){
+			console.log(dataJson.sat);
+		});
+	
+		//GPS_HDOP
+		DataReceiver.registerHandler("GPS_HDOP", function(dataJson){
+			console.log(dataJson.hdop);
+		});
+	
+		//IMU_EURAD
+		DataReceiver.registerHandler("IMU_EURAD", function(dataJson){
+			console.log(dataJson.y);
+			console.log(dataJson.p);
+			console.log(dataJson.r);
+		});
+	
+		//3.2 IMU_ALT
+		DataReceiver.registerHandler("IMU_ALT", function(dataJson){
+			$('#imu_alt').value(dataJson.alt);
+		});
+	
+		//BAT_VOL
+		DataReceiver.registerHandler("BAT_VOL", function(dataJson){
+		//
+		});
+		// setup udp
+		DataReceiver.startUdp();
+		
+		var center = new Point(30.714943, 103.984044, new SpatialReference({wkid: 4326})); // WGS84
+		MapProvider.initMap(center, "static", "mapDiv");
+      });
+	});
+			
+  </script>
+  </head>
+  <body>
+    <h1>PlanePlanner!</h1>
+	<div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6" id="mapDiv" style="width:800px;height:800px;">
+	    </div>
+        <div class="col-md-6">
+	      <div class="row">
+            <div class="col-xs-8 col-sm-12">
+              <div style="width:700px;height:400px;" id="model"></div>
+            </div>
+	      </div>
+          <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              1.1 Speed
+			  <label id="gps_spd"></label>
+            </div>
+            <div class="col-xs-4 col-sm-6">
+              1.2 Time
+			  <label id="imu_alt"></label>
+            </div>
+          </div>
+		  <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              2.1 GPS_CRS
+			  <label id="gps_crs"></label>
+            </div>
+            <div class="col-xs-4 col-sm-6">
+              2.2 Course_10Aixs
+			  <label id="imu_alt"></label>
+            </div>
+          </div>
+	      <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              3.1 GPS_Alt
+			  <label id="gps_alt"></label>
+            </div>
+            <div class="col-xs-4 col-sm-6">
+			  3.2 IMU_ALT
+			  <label id="imu_alt"></label>
+            </div>
+          </div>
+		  <div class="row">
+            <div class="col-xs-8 col-sm-6">
+              4.1 Voltage
+			  <label ></label>
+            </div>
+            <div class="col-xs-4 col-sm-6">
+			  4.2 Flying Time
+			  <label ></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+
